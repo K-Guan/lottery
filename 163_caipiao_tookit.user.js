@@ -5,7 +5,7 @@
 // @description  Tools, and styles for caipiao.163.com
 // @author       Kevin
 // @include      /^https?:\/\/trend\.caipiao\.163\.com\/.*/
-// @grant        none
+// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 /* jshint -W097 */
 /* jshint esnext:true */
@@ -50,7 +50,7 @@ const funcs.sendRequest = (balls, times, date) => {
 
     GM_xmlhttpRequest({
        method: 'POST', 
-       url: 'http://keving.pythonanywhere.com/caipiao',
+       url: 'http://keving.pythonanywhere.com/lottery',
        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
        data: JSON.stringify({ database: /\w+/.exec(document.location.pathname)[0],
                               balls: balls,
