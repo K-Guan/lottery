@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
+import json
 from collections import OrderedDict
-from flask import Blueprint, jsonify, request, abort
+from flask import Blueprint, jsonify, request
 
 diff_checker = Blueprint("diff_checker", __name__)
 
