@@ -38,5 +38,5 @@ def result_checker(database_name, balls, times, date):
 def request_receiver():
     # get and load the data as json, then run `result_checker` on the data,
     # and send it as json use `jsonify` function
-    data = json.loads(request.form)
+    data = json.loads(str(request.form))
     return jsonify(result_checker(**data))
