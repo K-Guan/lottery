@@ -2,7 +2,7 @@
 from collections import OrderedDict
 from flask import Blueprint, jsonify, request, abort
 
-lottery = Blueprint("lottery", __name__)
+diff_checker = Blueprint("diff_checker", __name__)
 
 
 def result_checker(database_name, balls, times, date):
@@ -33,7 +33,7 @@ def result_checker(database_name, balls, times, date):
     return result
 
 
-@lottery.route('/', methods=["POST"])
+@diff_checker.route('/', methods=["GET", "POST"])
 def request_receiver():
     # get and load the data as json, then run `result_checker` on the data,
     # and send it as json use `jsonify` function
