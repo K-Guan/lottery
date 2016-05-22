@@ -37,11 +37,11 @@ elementsToHide.map(element => {
 // define functions to send the request and get the duplicates result
 const funcs = {};
 
-const funcs.resultParser = (result) => {
+funcs.resultParser = (result) => {
     console.log(result);
 };
 
-const funcs.sendRequest = (balls, times, date) => {
+funcs.sendRequest = (balls, times, date) => {
     const result = {
         balls: balls,
         times: times,
@@ -49,73 +49,74 @@ const funcs.sendRequest = (balls, times, date) => {
     };
 
     GM_xmlhttpRequest({
-       method: 'POST', 
-       url: 'http://keving.pythonanywhere.com/lottery',
-       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-       data: JSON.stringify({ database: /\w+/.exec(document.location.pathname)[0],
+        method: 'POST',
+        url: 'http://keving.pythonanywhere.com/lottery',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        data: JSON.stringify({ database: /\w+/.exec(document.location.pathname)[0],
                               balls: balls,
                               times: times,
                               date: date
-       }),
-       onload: response => {
-           result.duplicates = JSON.parse(response.responseText);
-       }
-    }); 
+                             }),
+        onload: response => {
+            result.duplicates = JSON.parse(response.responseText);
+        }
+    });
 
     funcs.resultParser(result);
 };
 
-const funcs.getResult = (row, date) => {
+funcs.getResult = (row, date) => {
     const times = document.getElementById('times_options').value;
 
     if (row) {
-        var selectedBalls = Array.from(row.getElementsByTagName('td'))
-            .filter(element => element.className.indexOf('ball_red') > -1 || element.className.indexOf('ball_brown') > -1)
-            .map(element => element.innerHTML);
-    } else {
-        var selectedBalls = Array.from((document.getElementById('presele') || document.getElementsByClassName('lastRow')[0])
-                                       .getElementsByClassName(' realBall'))
-                                       .map(element => element.innerHTML);
-    }
+        const selectedBalls = Array.from(row.getElementsByTagName('td'))
+        .filter(element => element.className.indexOf('ball_red') > -1 || element.className.indexOf('ball_brown') > -1)
+        .map(element => element.innerHTML);
 
-    funcs.sendRequest(selectedBalls, times, date ? date : 'The balls of yours');
+        funcs.sendRequest(selectedBalls, times, date);
+    } else {
+        const selectedBalls = Array.from((document.getElementById('presele') || document.getElementsByClassName('lastRow')[0]).getElementsByClassName(' realBall'))
+        .map(element => element.innerHTML);
+
+        funcs.sendRequest(selectedBalls, times, 'The balls of yours');
+    }
 };
 
 
 // removing and creating buttons from "toolBox"
-const funcs.init = () => {
+funcs.init = () => {
     const toolBox = document.getElementById('toolBox');
-    
+
     toolBox.innerHTML = '';
     toolBox.insertAdjacentHTML('beforeend', '<li id="check" style="height: auto;">检查<br>重复</li>');
     toolBox.insertAdjacentHTML('beforeend', `
-    <li style="height: auto;">
-    <select id="times_options">
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-    <option value="6">6</option>
-    </select>
-    </li>`);
-    
-    
+<li style="height: auto;">
+<select id="times_options">
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+</select>
+</li>`);
+
+
     Array.from(document.getElementsByTagName('tr'))
         .filter(element => element.hasAttribute('data-period'))
         .map(row => {
-            const dateElement = row.children[0];
-            const date = dateElement.innerHTML;
-            const link = document.createElement('a');
-    
-            link.href = 'javascript:void(0);';
-            link.innerHTML = date;
-    
-            dateElement.innerHTML = '';
-            dateElement.appendChild(link);
-    
-            dateElement.addEventListener('click', event => funcs.getResult(row, date));
+        const dateElement = row.children[0];
+        const date = dateElement.innerHTML;
+        const link = document.createElement('a');
+
+        link.href = 'javascript:void(0);';
+        link.innerHTML = date;
+
+        dateElement.innerHTML = '';
+        dateElement.appendChild(link);
+
+        dateElement.addEventListener('click', event => funcs.getResult(row, date));
     });
-    
-    
+
+
     document.getElementById('check').addEventListener('click', event => funcs.getResult(false));
 };
 
