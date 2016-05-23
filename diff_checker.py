@@ -25,9 +25,9 @@ def result_checker(database, balls, times, date):
         if len(duplicates) >= times:
             result['nodes'].append({
                 'date': sub_date,
-                'balls': list(sub_balls),
+                'balls': sorted(sub_balls),
                 'times': len(duplicates),
-                'duplicates': list(duplicates)
+                'duplicates': sorted(duplicates)
             })
 
     return result
