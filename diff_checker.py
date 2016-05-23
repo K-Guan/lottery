@@ -9,7 +9,7 @@ def result_checker(database, balls, times, date):
     rows = []
     result = {'nodes': []}
 
-    with open(database, 'r') as f:
+    with open('/home/KevinG/mysite/LotteryDataAnalysis/' + database, 'r') as f:
         for line in f:
             l = line.rstrip().split('|')
             rows.append((l[0], set(l[1].split())))
