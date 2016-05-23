@@ -56,7 +56,7 @@ ${duplicate.balls.map(element => '<span>' + element + '</span>').join(' ')}
 </p>`).join('<br />');
 
 
-    const colorTrigger = element => {
+    const styleTrigger = element => {
         const duplicates = element.getAttribute('duplicates').split(',');
         const trigger = ball => {
             if (duplicates.indexOf(ball.innerHTML) > -1) {
@@ -69,8 +69,8 @@ ${duplicate.balls.map(element => '<span>' + element + '</span>').join(' ')}
     };
 
     for (const element of Array.from(document.getElementsByClassName('subdupes'))) {
-        element.addEventListener('mouseenter', event => colorTrigger(element));
-        element.addEventListener('mouseleave', event => colorTrigger(element));
+        element.addEventListener('mouseenter', event => styleTrigger(element));
+        element.addEventListener('mouseleave', event => styleTrigger(element));
     }
 };
 
@@ -138,8 +138,10 @@ funcs.init = () => {
         const date = dateElement.innerHTML;
         const link = document.createElement('a');
 
+        /* jshint ignore:start */
         link.href = 'javascript:void(0);';
         link.innerHTML = date;
+        /* jshint ignore:end */
 
         dateElement.innerHTML = '';
         dateElement.appendChild(link);
