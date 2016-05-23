@@ -113,7 +113,10 @@ funcs.init = () => {
         dateElement.innerHTML = '';
         dateElement.appendChild(link);
 
-        dateElement.addEventListener('click', event => funcs.getResult(row, date));
+        dateElement.addEventListener('click', event => {
+            row.click();
+            funcs.getResult(row, date);
+        });
     });
 
 
