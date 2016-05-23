@@ -78,6 +78,9 @@ ${duplicate.balls.map(element => '<span>' + element + '</span>').join(' ')}
         element.addEventListener('mouseenter', event => styleTrigger(element));
         element.addEventListener('mouseleave', event => styleTrigger(element));
     }
+
+
+    document.getElementById('main_balls').scrollIntoView();
 };
 
 funcs.sendRequest = (balls, times, date) => {
