@@ -50,7 +50,7 @@ funcs.sendRequest = (balls, times, date) => {
 
     GM_xmlhttpRequest({
         method: 'POST',
-        url: 'http://keving.pythonanywhere.com/lottery',
+        url: 'http://keving.pythonanywhere.com/lottery/',
         headers: { 'Content-Type': 'application/json' },
         data: JSON.stringify({ database: /\w+/.exec(document.location.pathname)[0],
                               balls: balls,
