@@ -22,7 +22,7 @@ def result_checker(database, balls, times, date):
 
         duplicates = set(balls).intersection(sub_balls)
 
-        if len(duplicates) >= times:
+        if len(duplicates) >= int(times):
             result['nodes'].append({
                 'date': sub_date,
                 'balls': sorted(sub_balls),
