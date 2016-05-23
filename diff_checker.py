@@ -38,5 +38,3 @@ def request_receiver():
     # get and load the data as json, then run `result_checker` on the data,
     # and send it as json use `jsonify` function
     return jsonify(result_checker(**request.json))
-
-diff_checker.run(port=80, debug=True)
