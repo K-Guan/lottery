@@ -58,7 +58,7 @@ funcs.sendRequest = (balls, times, date) => {
                               date: date
                              }),
         onload: response => {
-            result.duplicates = JSON.parse(response.responseText)['nodes'];
+            result.duplicates = JSON.parse(response.responseText).nodes;
         }
     });
 

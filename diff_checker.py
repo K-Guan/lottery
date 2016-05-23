@@ -2,7 +2,7 @@
 from collections import OrderedDict
 from flask import Blueprint, jsonify, request
 
-diff_checker = Blueprint("diff_checker", __name__)
+diff_checker = Blueprint('diff_checker', __name__)
 
 
 def result_checker(database, balls, times, date):
@@ -20,7 +20,7 @@ def result_checker(database, balls, times, date):
         if sub_date == date:
             continue
 
-        duplicates = set(balls).intersection(set(sub_balls))
+        duplicates = set(balls).intersection(sub_balls)
 
         if len(duplicates) >= times:
             result['nodes'].append({
@@ -35,6 +35,7 @@ def result_checker(database, balls, times, date):
 
 @diff_checker.route('/', methods=["GET", "POST"])
 def request_receiver():
-    # get and load the data as json, then run `result_checker` on the data,
-    # and send it as json use `jsonify` function
-    return jsonify(result_checker(**request.json))
+    if request.method == 'GET':
+        return 'Please use "POST" method on this page.'
+    elif request.method == 'POST':
+        return jsonify(result_checker(**request.json))
