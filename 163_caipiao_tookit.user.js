@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         163 caipiao toolkit
 // @namespace    https://stackoverflow.com/users/5299236/kevin-guan
-// @version      1.2
+// @version      1.5
 // @description  Tools, and styles for caipiao.163.com
 // @author       Kevin
 // @include      /^https?:\/\/trend\.caipiao\.163\.com\/.*/
@@ -45,16 +45,20 @@ const funcs = {};
 
 funcs.resultParser = (result) => {
     if (!document.getElementById('result_node')) {
+        const clearAll = document.getElementById('clearAll');
         const resultNode = document.createElement('div');
-        resultNode.setAttribute('id', 'result_node');
 
+        resultNode.setAttribute('id', 'result_node');
         document.getElementById('chart_area').appendChild(resultNode);
+
+        document.getElementById('clearAll').innerHTML = "清空全部选号与重复检查数据"
+        document.getElementById('clearAll').addEventListener('click', event => resultNode.innerHTML = '');
     }
 
 
     const resultNode = document.getElementById('result_node');
     resultNode.innerHTML = `<p id="main_balls" style="font-size: 20px;">
-<strong>${result.date}</strong>:
+<strong style="color: green;">${result.date}</strong>:
 ${result.balls.map(element => `<span>${element}</span>`).join(' ')}
 </p>
 <br />
@@ -183,6 +187,7 @@ window.addEventListener('load', function() {
     }
 
     funcs.init();
+    window.scrollTo(0, document.body.scrollHeight);
 }, false);
 
 
