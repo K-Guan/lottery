@@ -61,7 +61,7 @@ ${result.balls.map(element => `<span>${element}</span>`).join(' ')}
 <br />` + result.duplicates.map(duplicate => `<p class="subdupes" duplicates="${duplicate.duplicates}" style="font-size: 16px;">
 <a href="${window.location.origin + window.location.pathname +
                                 `?beginPeriod=${String(Number(duplicate.date) - 5)}
-&endPeriod=${String(Number(duplicate.date) + 5)}`}"><strong>${duplicate.date}</strong></a>:
+&endPeriod=${String(Number(duplicate.date) + 5)}`}" target="_blank"><strong>${duplicate.date}</strong></a>:
 ${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
 <sub>(${duplicate.times})</sub></p>`).join('<br />');
 
