@@ -38,7 +38,40 @@ elementsToHide.map(element => {
 const funcs = {};
 
 funcs.resultParser = (result) => {
-    console.log(result);
+    if (!document.getElementById('result_node')) {
+        const resultNode = document.createElement('div');
+        resultNode.setAttribute('id', 'result_node');
+
+        document.getElementById('chart_area').appendChild(resultNode);
+    }
+
+
+    const resultNode = document.getElementById('result_node');
+    resultNode.innerHTML = `<p id="main_balls" style="font-size: 20px;"><strong>${result.date}</strong>:
+${result.balls.map(element => '<span>' + element + '</span>').join(' ')}
+</p>` + '<br /><br />' +
+        result.duplicates.map(duplicate => `<p class="subdupes" duplicates="${duplicate.duplicates}" style="font-size: 16px;">
+<strong>${duplicate.date}</strong>:
+${duplicate.balls.map(element => '<span>' + element + '</span>').join(' ')}
+</p>`).join('<br />');
+
+
+    const colorTrigger = element => {
+        const duplicates = element.getAttribute('duplicates').split(',');
+        const trigger = ball => {
+            if (duplicates.indexOf(ball.innerHTML) > -1) {
+                ball.style.color = ball.style.color ? '' : "red";
+            }
+        };
+
+        Array.from(element.getElementsByTagName('span')).map(trigger);
+        Array.from(document.getElementById('main_balls').getElementsByTagName('span')).map(trigger);
+    };
+
+    for (const element of Array.from(document.getElementsByClassName('subdupes'))) {
+        element.addEventListener('mouseenter', event => colorTrigger(element));
+        element.addEventListener('mouseleave', event => colorTrigger(element));
+    }
 };
 
 funcs.sendRequest = (balls, times, date) => {
@@ -59,10 +92,9 @@ funcs.sendRequest = (balls, times, date) => {
                              }),
         onload: response => {
             result.duplicates = JSON.parse(response.responseText).nodes;
+            funcs.resultParser(result);
         }
     });
-
-    funcs.resultParser(result);
 };
 
 funcs.getResult = (row, date) => {
@@ -93,9 +125,8 @@ funcs.init = () => {
 <li style="height: auto;">
 <select id="times_options">
 <option value="3">3</option>
-<option value="4">4</option>
+<option value="4" selected="selected">4</option>
 <option value="5">5</option>
-<option value="6">6</option>
 </select>
 </li>`);
 
