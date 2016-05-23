@@ -1,14 +1,20 @@
 // ==UserScript==
 // @name         163 caipiao toolkit
 // @namespace    https://stackoverflow.com/users/5299236/kevin-guan
-// @version      0.7
+// @version      1.0
 // @description  Tools, and styles for caipiao.163.com
 // @author       Kevin
 // @include      /^https?:\/\/trend\.caipiao\.163\.com\/.*/
+// @require      https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js
+// @require      https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.min.js
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
-/* jshint -W097 */
-/* jshint esnext:true */
+
+/* jshint ignore:start */
+var inline_src = (<><![CDATA[
+/* jshint ignore:end */
+/* jshint esnext: true */
+
 
 /* removing useless nodes part start */
 const elementsToHide = [
@@ -157,3 +163,10 @@ funcs.init = () => {
 };
 
 setTimeout(funcs.init, 4000);
+
+
+/* jshint ignore:start */
+]]></>).toString();
+var c = babel.transform(inline_src);
+eval(c.code);
+/* jshint ignore:end */
