@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 from collections import OrderedDict
-from flask import Flask, jsonify, request
+from flask import Blueprint, jsonify, request
 
-diff_checker = Flask(__name__)
+diff_checker = Blueprint("diff_checker", __name__)
 
 
 def result_checker(database, balls, times, date):
