@@ -25,6 +25,7 @@ const elementsToHide = [
     'statisticsTitle',
     'staticTable',
     'docFoot',
+    document.getElementsByClassName('f_right')[0],
     document.getElementsByClassName('parameter')[0],
     document.getElementsByClassName('hot_block seohot_block clearfix')[0]
 ];
@@ -69,7 +70,7 @@ funcs.resultParser = (result) => {
 
         document.getElementById('clearResult').addEventListener('click', event => {
             resultNode.innerHTML = '';
-            event.target.style.display = event.target.style.display ? '' : 'none';
+            event.target.style.display = 'none';
         });
     }
 
@@ -106,6 +107,9 @@ ${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
         element.addEventListener('mouseleave', event => styleTrigger(element));
     }
 
+
+    // show the `clearResult` button
+    document.getElementById('clearResult').style.display = '';
 
     // scroll to the result node automatically
     document.getElementById('main_balls').scrollIntoView();
