@@ -53,13 +53,16 @@ funcs.resultParser = (result) => {
 
 
     const resultNode = document.getElementById('result_node');
-    resultNode.innerHTML = `<p id="main_balls" style="font-size: 20px;"><strong>${result.date}</strong>:
-${result.balls.map(element => '<span>' + element + '</span>').join(' ')}
-</p>` + '<br /><br />' +
-        result.duplicates.map(duplicate => `<p class="subdupes" duplicates="${duplicate.duplicates}" style="font-size: 16px;">
+    resultNode.innerHTML = `<p id="main_balls" style="font-size: 20px;">
+<strong>${result.date}</strong>:
+${result.balls.map(element => `<span>${element}</span>`).join(' ')}
+</p>
+<br />
+<br />` + result.duplicates.map(duplicate => `<p class="subdupes" duplicates="${duplicate.duplicates}" style="font-size: 16px;">
 <strong>${duplicate.date}</strong>:
-${duplicate.balls.map(element => '<span>' + element + '</span>').join(' ')}
-</p>`).join('<br />');
+${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
+<sub>(${duplicate.times})</sub></p>`).join('<br />');
+
 
 
     const styleTrigger = element => {
