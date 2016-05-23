@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         163 caipiao toolkit
 // @namespace    https://stackoverflow.com/users/5299236/kevin-guan
-// @version      1.0
+// @version      1.2
 // @description  Tools, and styles for caipiao.163.com
 // @author       Kevin
 // @include      /^https?:\/\/trend\.caipiao\.163\.com\/.*/
@@ -59,10 +59,11 @@ ${result.balls.map(element => `<span>${element}</span>`).join(' ')}
 </p>
 <br />
 <br />` + result.duplicates.map(duplicate => `<p class="subdupes" duplicates="${duplicate.duplicates}" style="font-size: 16px;">
-<strong>${duplicate.date}</strong>:
+<a href="${window.location.origin + window.location.pathname +
+                                `?beginPeriod=${String(Number(duplicate.date) - 5)}
+&endPeriod=${String(Number(duplicate.date) + 5)}`}"><strong>${duplicate.date}</strong></a>:
 ${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
 <sub>(${duplicate.times})</sub></p>`).join('<br />');
-
 
 
     const styleTrigger = element => {
@@ -126,6 +127,13 @@ funcs.getResult = (row, date) => {
     }
 };
 
+funcs.lineHighlight = () => {
+    const search = JSON.parse('{"' + decodeURI(location.search.substring(1)).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+    Array.from(document.getElementsByTagName('tr')).filter(element => element.getAttribute('data-period') ===
+                                                           String(Number(search.beginPeriod) +
+                                                                  ((Number(search.endPeriod) - Number(search.beginPeriod)) / 2)))[0].click();
+};
+
 
 // removing and creating buttons from "toolBox"
 funcs.init = () => {
@@ -168,7 +176,14 @@ funcs.init = () => {
     document.getElementById('check').addEventListener('click', event => funcs.getResult(false));
 };
 
-setTimeout(funcs.init, 4000);
+
+window.addEventListener('load', function() {
+    if (window.location.search.indexOf('?beginPeriod=') > -1) {
+        funcs.lineHighlight();
+    }
+
+    funcs.init();
+}, false);
 
 
 /* jshint ignore:start */
