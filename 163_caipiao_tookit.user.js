@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         163 caipiao toolkit
 // @namespace    https://stackoverflow.com/users/5299236/kevin-guan
-// @version      1.7
+// @version      2.0
 // @description  Tools, and styles for caipiao.163.com
 // @author       Kevin
 // @include      /^https?:\/\/trend\.caipiao\.163\.com\/.*/
@@ -52,30 +52,45 @@ while (nextToHide) {
 /* check duplicates part start */
 const funcs = {};
 
-// function to get the result and put it into the page
+// function that has to run when `resultNode` shows or created
+funcs.resultOnshow = () => {
+    document.getElementById('resultNode').style.display = '';
+    document.getElementById('displayResult').innerHTML = '隐藏分析结果';
+
+    // scroll to the result node automatically
+    document.getElementById('main_balls').scrollIntoView();
+}
+
+// function to gets the result and puts it into the page
 funcs.resultParser = (result) => {
-    if (!document.getElementById('result_node')) {
+    if (!document.getElementById('resultNode')) {
         // create the node of result
         const resultNode = document.createElement('div');
 
-        // set the `id` of result node to  `result_node`
-        resultNode.setAttribute('id', 'result_node');
+        // set the `id` of result node to  `resultNode`
+        resultNode.setAttribute('id', 'resultNode');
         // append it at the buttom of the page
         document.getElementById('chart_area').appendChild(resultNode);
 
 
-        // add a button to clear the result
+        // add a button to hide/show the result
         const buttonsRight = document.getElementsByClassName('f_right')[0];
-        buttonsRight.innerHTML = '<a id="clearResult" href="javascript:void(0);">清空分析结果</a>';
+        buttonsRight.innerHTML = '<a id="displayResult" href="javascript:void(0);">隐藏分析结果</a>';
+        buttonsRight.style.display = '';
 
-        document.getElementById('clearResult').addEventListener('click', event => {
-            resultNode.innerHTML = '';
-            event.target.style.display = 'none';
+        document.getElementById('displayResult').addEventListener('click', event => {
+            if (resultNode.style.display !== 'none') {
+                resultNode.style.display = 'none';
+                event.target.innerHTML = '显示分析结果';
+            } else {
+                funcs.resultOnshow();
+            }
         });
     }
 
     // put the result into resultNode
-    const resultNode = document.getElementById('result_node');
+    const resultNode = document.getElementById('resultNode');
+
     resultNode.innerHTML = `<p id="main_balls" style="font-size: 20px;">
 <strong style="color: green;">${result.date}</strong>:
 ${result.balls.map(element => `<span>${element}</span>`).join(' ')}
@@ -87,7 +102,6 @@ ${result.balls.map(element => `<span>${element}</span>`).join(' ')}
 &endPeriod=${String(Number(duplicate.date) + 5)}`}" target="_blank"><strong>${duplicate.date}</strong></a>:
 ${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
 <sub>(${duplicate.times})</sub></p>`).join('<br />');
-
 
     // trigger the color when hovering over the duplicate balls
     const styleTrigger = element => {
@@ -107,15 +121,10 @@ ${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
         element.addEventListener('mouseleave', event => styleTrigger(element));
     }
 
-
-    // show the `clearResult` button
-    document.getElementById('clearResult').style.display = '';
-
-    // scroll to the result node automatically
-    document.getElementById('main_balls').scrollIntoView();
+    funcs.resultOnshow();
 };
 
-// function to send the selected balls, duplicate times, and date as json
+// function to sends the selected balls, duplicate times, and date as JSON
 funcs.sendRequest = (balls, times, date) => {
     // define the result object which we need to use later
     const result = {
@@ -145,7 +154,7 @@ funcs.sendRequest = (balls, times, date) => {
     });
 };
 
-// function to get the selected balls, times, and date
+// function to gets the selected balls, times, and date
 funcs.getResult = (row, date) => {
     const times = document.getElementById('times_options').value;
 
@@ -161,7 +170,7 @@ funcs.getResult = (row, date) => {
     funcs.sendRequest(selectedBalls.map(element => element.innerHTML), times, date);
 };
 
-// function to highlight the line at the center
+// function to highlights the line at the center
 funcs.lineHighlight = () => {
     const search = JSON.parse('{"' + decodeURI(location.search.substring(1)).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
     Array.from(document.getElementsByTagName('tr')).filter(element => element.getAttribute('data-period') ===
@@ -170,8 +179,8 @@ funcs.lineHighlight = () => {
 };
 
 
-// function to remove the old buttons and create a button to
-// get the selected balls and the options of `times` from "toolBox"
+// function to removes the old buttons and creates a button to
+// gets the selected balls and the options of `times` from "toolBox"
 funcs.init = () => {
     const toolBox = document.getElementById('toolBox');
 
