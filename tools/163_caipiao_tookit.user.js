@@ -57,16 +57,7 @@ usefulTools.hideNodes = () => {
 
 // function to highlights rows by the newest blue ball
 usefulTools.blueBallHighlight = () => {
-    const checkEquals = (firstArr, lastArr) => {
-        if (firstArr.length !== lastArr.length) return false;
-
-        for (let i = 0; i < firstArr.length; i++) {
-            if (firstArr[i] !== lastArr[i]) return false;
-        }
-
-        return true;
-    };
-
+    const arrEq = (firstArr, lastArr) => firstArr.every((item, index) => lastArr[index] === firstArr);
     const blueBalls = Array.from(document.getElementsByTagName('tr'))
                                  .filter(element => element.getAttribute('data-period'))
                                  .map(row => row.getElementsByClassName('ball_blue'));
