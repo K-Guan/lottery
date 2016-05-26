@@ -17,7 +17,7 @@ var inline_src = (<><![CDATA[
 
 
 /* check duplicates part start */
-const usefulTool = {};
+const usefulTools = {};
 const diffCheckerFuncs = {};
 const database = /\w+/.exec(document.location.pathname)[0];
 
