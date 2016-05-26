@@ -258,7 +258,7 @@ diffCheckerFuncs.init = () => {
 
 // code will runs after everything has been loaded
 window.addEventListener('load', function() {
-    /* remove or comment "this" part if you want to 
+    /* remove or comment "this" part if you want to
        disable the Diff Checker feature */
 
     // "this" part start
