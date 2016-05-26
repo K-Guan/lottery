@@ -57,7 +57,7 @@ usefulTools.hideNodes = () => {
 
 // function to highlights rows by the newest blue ball
 usefulTools.blueBallHighlight = () => {
-    const arrEq = (firstArr, lastArr) => firstArr.every((item, index) => lastArr[index] === firstArr);
+    const arrEq = (firstArr, lastArr) => firstArr.every((item, index) => lastArr[index] === item);
     const blueBalls = Array.from(document.getElementsByTagName('tr'))
                                  .filter(element => element.getAttribute('data-period'))
                                  .map(row => row.getElementsByClassName('ball_blue'));
