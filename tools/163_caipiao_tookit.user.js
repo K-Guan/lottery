@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         163 caipiao toolkit
 // @namespace    https://stackoverflow.com/users/5299236/kevin-guan
-// @version      2.0
+// @version      2.5
 // @description  Tools, and styles for caipiao.163.com
 // @author       Kevin
 // @include      /^https?:\/\/trend\.caipiao\.163\.com\/.*/
@@ -16,45 +16,71 @@ var inline_src = (<><![CDATA[
 /* jshint esnext: true */
 
 
-/* removing useless nodes part start */
-const elementsToHide = [
-    'topNav',
-    'docHead',
-    'fastBet',
-    'awardInfoId',
-    'statisticsTitle',
-    'staticTable',
-    'docFoot',
-    document.getElementsByClassName('f_right')[0],
-    document.getElementsByClassName('parameter')[0],
-    document.getElementsByClassName('hot_block seohot_block clearfix')[0]
-];
-
-elementsToHide.map(element => {
-    if (typeof element === "string")
-        element = document.getElementById(element);
-
-    if (!element) return;
-    element.style.display = 'none';
-});
-
-
-// hide the buttons and text after the "清空全部选号" button
-let nextToHide = document.getElementById('trend_daigou');
-
-while (nextToHide) {
-    if (nextToHide.style) nextToHide.style.display = 'none';
-    nextToHide = nextToHide.nextSibling;
-}
-/* removing useless nodes part end */
-
-
 /* check duplicates part start */
-const funcs = {};
+const usefulTool = {};
+const diffCheckerFuncs = {};
 const database = /\w+/.exec(document.location.pathname)[0];
 
+// function to hides useless nodes
+usefulTools.hideNodes = () => {
+    const nodesToHide = [
+        'topNav',
+        'docHead',
+        'fastBet',
+        // 'toolBoxCon',   /* if you don't use the `diffChecker` functions, you can uncomment this line
+        'awardInfoId',
+        'statisticsTitle',
+        'staticTable',
+        'docFoot',
+        document.getElementsByClassName('f_right')[0],
+        document.getElementsByClassName('parameter')[0],
+        document.getElementsByClassName('hot_block seohot_block clearfix')[0]
+    ];
+
+    nodesToHide.map(element => {
+        if (typeof element === "string")
+            element = document.getElementById(element);
+
+        if (!element) return;
+        element.style.display = 'none';
+    });
+
+
+    // hide the buttons and text after the "清空全部选号" button
+    let nextToHide = document.getElementById('trend_daigou');
+
+    while (nextToHide) {
+        if (nextToHide.style) nextToHide.style.display = 'none';
+        nextToHide = nextToHide.nextSibling;
+    }
+};
+
+// function to highlights rows by the newest blue ball
+usefulTools.blueBallHighlight = () => {
+    const checkEquals = (firstArr, lastArr) => {
+        if (firstArr.length !== lastArr.length) return false;
+
+        for (let i = 0; i < firstArr.length; i++) {
+            if (firstArr[i] !== lastArr[i]) return false;
+        }
+
+        return true;
+    };
+
+    const blueBalls = Array.from(document.getElementsByTagName('tr'))
+                                 .filter(element => element.getAttribute('data-period'))
+                                 .map(row => row.getElementsByClassName('ball_blue'));
+
+    const lastBalls = Array.from(blueBalls[blueBalls.length - 1]).map(ball => ball.innerHTML);
+
+    for (const balls of blueBalls) {
+        if (checkEquals(Array.from(balls).map(ball => ball.innerHTML), lastBalls)) balls[0].parentNode.click();
+    }
+};
+
+/* Functions of Diff Checker part start */
 // function to gets the times by database
-funcs.getTimes = () => {
+diffCheckerFuncs.getTimes = () => {
 
     const returnHtml = (optionsHtml) => {
         return `<li style="height: auto;">
@@ -82,7 +108,7 @@ funcs.getTimes = () => {
 };
 
 // function to gets the result and puts it into the page
-funcs.resultParser = (result) => {
+diffCheckerFuncs.resultParser = (result) => {
     if (!document.getElementById('resultNode')) {
         // create the node of result
         const resultNode = document.createElement('div');
@@ -131,7 +157,7 @@ ${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
 };
 
 // function to sends the selected balls, duplicate times, and date as JSON
-funcs.sendRequest = (balls, times, date) => {
+diffCheckerFuncs.sendRequest = (balls, times, date) => {
     // define the result object which we need to use later
     const result = {
         balls: balls,
@@ -155,18 +181,18 @@ funcs.sendRequest = (balls, times, date) => {
         onload: response => {
             // put the response text into `result.duplicates`, and run `resultParser` on the result
             result.duplicates = JSON.parse(response.responseText).nodes;
-            funcs.resultParser(result);
+            diffCheckerFuncs.resultParser(result);
         }
     });
 };
 
 // function to gets the selected balls, times, and date
-funcs.getResult = (row, date) => {
+diffCheckerFuncs.getResult = (row, date) => {
     const times = document.getElementById('times_options').value;
 
     // check if the balls are selected by user, or they're in the database
     if (row) {
-         funcs.sendRequest(Array.from(row.getElementsByTagName('td'))
+         diffCheckerFuncs.sendRequest(Array.from(row.getElementsByTagName('td'))
                                       .filter(element => element.className.indexOf('ball_red') > -1 || element.className.indexOf('ball_brown') > -1)
                                       .map(element => element.innerHTML), times, date);
     } else {
@@ -175,12 +201,12 @@ funcs.getResult = (row, date) => {
                                           selectingRow.getElementsByClassName('active') :
                                           selectingRow.getElementsByClassName(' realBall'));
 
-         funcs.sendRequest(selectedBalls.map(element => element.innerHTML), times, date);
+         diffCheckerFuncs.sendRequest(selectedBalls.map(element => element.innerHTML), times, date);
     }
 };
 
 // function to highlights the line at the center
-funcs.lineHighlight = () => {
+diffCheckerFuncs.lineHighlight = () => {
     const search = JSON.parse('{"' + decodeURI(location.search.substring(1)).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
     Array.from(document.getElementsByTagName('tr')).filter(element => element.getAttribute('data-period') ===
                                                            String(Number(search.beginPeriod) +
@@ -190,17 +216,17 @@ funcs.lineHighlight = () => {
 
 // function to removes the old buttons and creates a button to
 // gets the selected balls and the options of `times` from "toolBox"
-funcs.init = () => {
+diffCheckerFuncs.init = () => {
     const toolBox = document.getElementById('toolBox');
 
     toolBox.innerHTML = '';
     // inserting button
     toolBox.insertAdjacentHTML('beforeend', '<li id="check" style="height: auto;">检查<br>重复</li>');
     // inserting options
-    toolBox.insertAdjacentHTML('beforeend', funcs.getTimes());
+    toolBox.insertAdjacentHTML('beforeend', diffCheckerFuncs.getTimes());
 
     // add event listener to the button
-    document.getElementById('check').addEventListener('click', event => funcs.getResult(false, 'The balls of yours'));
+    document.getElementById('check').addEventListener('click', event => diffCheckerFuncs.getResult(false, 'The balls of yours'));
 
 
     // create links on every rows so user can clicks them
@@ -223,19 +249,29 @@ funcs.init = () => {
             dateElement.addEventListener('click', event => {
                 // click on the row again to remove the line highlight
                 row.click();
-                funcs.getResult(row, date);
+                diffCheckerFuncs.getResult(row, date);
             });
     });
 };
+/* Functions of Diff Checker part end */
 
 
 // code will runs after everything has been loaded
 window.addEventListener('load', function() {
+    /* remove or comment "this" part if you want to 
+       disable the Diff Checker feature */
+
+    // "this" part start
     if (window.location.search.indexOf('fromDiff=true') > -1) {
-        funcs.lineHighlight();
+        diffCheckerFuncs.lineHighlight();
     }
 
-    funcs.init();
+    diffCheckerFuncs.init();
+    // "this" part end
+
+    usefulTools.hideNodes();
+    usefulTools.blueBallHighlight();
+
     window.scrollTo(0, document.body.scrollHeight);  // scroll to the buttom automatically after the code ran
 }, false);
 
