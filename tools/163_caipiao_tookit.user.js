@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         163 caipiao toolkit
 // @namespace    https://stackoverflow.com/users/5299236/kevin-guan
-// @version      2.5
+// @version      2.7
 // @description  Tools, and styles for caipiao.163.com
 // @author       Kevin
 // @include      /^https?:\/\/trend\.caipiao\.163\.com\/.*/
@@ -84,7 +84,7 @@ diffCheckerFuncs.getTimes = () => {
 
     const returnHtml = (optionsHtml) => {
         return `<li style="height: auto;">
-                    <select id="times_options">
+                    <select id="timesOptions">
                         ${optionsHtml}
                     </select>
                 </li>`;
@@ -107,6 +107,14 @@ diffCheckerFuncs.getTimes = () => {
     }
 };
 
+// function to highlights the line at the center
+diffCheckerFuncs.lineHighlight = () => {
+    const search = JSON.parse('{"' + decodeURI(location.search.substring(1)).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+    Array.from(document.getElementsByTagName('tr')).filter(element => element.getAttribute('data-period') ===
+                                                           String(Number(search.beginPeriod) +
+                                                                  ((Number(search.endPeriod) - Number(search.beginPeriod)) / 2)))[0].click();
+};
+
 // function to gets the result and puts it into the page
 diffCheckerFuncs.resultParser = (result) => {
     if (!document.getElementById('resultNode')) {
@@ -116,13 +124,14 @@ diffCheckerFuncs.resultParser = (result) => {
         // set the `id` of result node to  `resultNode`
         resultNode.setAttribute('id', 'resultNode');
         // append it at the buttom of the page
+        document.getElementById('chart_area').insertAdjacentHTML('beforeend', '<br />');
         document.getElementById('chart_area').appendChild(resultNode);
     }
 
     // put the result into resultNode
     const resultNode = document.getElementById('resultNode');
 
-    resultNode.innerHTML = `<p id="main_balls" style="font-size: 20px;">
+    resultNode.innerHTML = `<p id="mainBalls" style="font-size: 20px;">
 <strong style="color: green;">${result.date}</strong>:
 ${result.balls.map(element => `<span>${element}</span>`).join(' ')}
 </p>
@@ -144,7 +153,7 @@ ${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
         };
 
         Array.from(element.getElementsByTagName('span')).map(trigger);
-        Array.from(document.getElementById('main_balls').getElementsByTagName('span')).map(trigger);
+        Array.from(document.getElementById('mainBalls').getElementsByTagName('span')).map(trigger);
     };
 
     for (const element of Array.from(document.getElementsByClassName('subdupes'))) {
@@ -153,7 +162,7 @@ ${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
     }
 
     // scroll to the result node automatically
-    document.getElementById('main_balls').scrollIntoView();
+    document.getElementById('resultNode').scrollIntoView();
 };
 
 // function to sends the selected balls, duplicate times, and date as JSON
@@ -188,7 +197,7 @@ diffCheckerFuncs.sendRequest = (balls, times, date) => {
 
 // function to gets the selected balls, times, and date
 diffCheckerFuncs.getResult = (row, date) => {
-    const times = document.getElementById('times_options').value;
+    const times = document.getElementById('timesOptions').value;
 
     // check if the balls are selected by user, or they're in the database
     if (row) {
@@ -205,15 +214,6 @@ diffCheckerFuncs.getResult = (row, date) => {
     }
 };
 
-// function to highlights the line at the center
-diffCheckerFuncs.lineHighlight = () => {
-    const search = JSON.parse('{"' + decodeURI(location.search.substring(1)).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
-    Array.from(document.getElementsByTagName('tr')).filter(element => element.getAttribute('data-period') ===
-                                                           String(Number(search.beginPeriod) +
-                                                                  ((Number(search.endPeriod) - Number(search.beginPeriod)) / 2)))[0].click();
-};
-
-
 // function to removes the old buttons and creates a button to
 // gets the selected balls and the options of `times` from "toolBox"
 diffCheckerFuncs.init = () => {
@@ -224,6 +224,17 @@ diffCheckerFuncs.init = () => {
     toolBox.insertAdjacentHTML('beforeend', '<li id="check" style="height: auto;">检查<br>重复</li>');
     // inserting options
     toolBox.insertAdjacentHTML('beforeend', diffCheckerFuncs.getTimes());
+    document.getElementById('timesOptions').addEventListener('change', event => {
+        if (document.getElementById('resultNode')) {
+            const date = document.getElementById('mainBalls').children[0].innerHTML;
+            if (date !== 'The balls of yours') {
+                diffCheckerFuncs.getResult(Array.from(document.getElementsByTagName('tr'))
+                                                      .filter(element => element.getAttribute('data-period') === date)[0], date);
+            } else {
+                 diffCheckerFuncs.getResult(false, date);
+            }
+        }
+    });
 
     // add event listener to the button
     document.getElementById('check').addEventListener('click', event => diffCheckerFuncs.getResult(false, 'The balls of yours'));
