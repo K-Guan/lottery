@@ -93,7 +93,7 @@ diffCheckerFuncs.getTimes = () => {
     if (database === 'ssq') {
        return returnHtml(htmlGenerator([3, 4, 5], 4));
     } else if (database === 'dlt') {
-        return returnHtml(htmlGenerator([2, 3, 4], 4));
+        return returnHtml(htmlGenerator([2, 3, 4], 3));
     } else if (database === 'qlc') {
         return returnHtml(htmlGenerator([4, 5, 6], 5));
     }
