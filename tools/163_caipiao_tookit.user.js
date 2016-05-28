@@ -72,7 +72,6 @@ usefulTools.blueBallHighlight = () => {
 /* Functions of Diff Checker part start */
 // function to gets the times by database
 diffCheckerFuncs.getTimes = () => {
-
     const returnHtml = (optionsHtml) => {
         return `<li style="height: auto;">
                     <select id="timesOptions">
@@ -93,8 +92,10 @@ diffCheckerFuncs.getTimes = () => {
 
     if (database === 'ssq') {
        return returnHtml(htmlGenerator([3, 4, 5], 4));
+    } else if (database === 'dlt') {
+        return returnHtml(htmlGenerator([2, 3, 4], 4));
     } else if (database === 'qlc') {
-        return returnHtml(htmlGenerator([5, 6], 5));
+        return returnHtml(htmlGenerator([4, 5, 6], 5));
     }
 };
 
