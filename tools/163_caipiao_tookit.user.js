@@ -133,7 +133,7 @@ ${result.balls.map(element => `<span>${element}</span>`).join(' ')}
                                 `?beginPeriod=${String(Number(duplicate.date) - 5)}
 &endPeriod=${String(Number(duplicate.date) + 5)}`}&fromDiff=true" target="_blank"><strong>${duplicate.date}</strong></a>:
 ${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
-<sub>(${duplicate.times})</sub></p>`).join('<br />');
+<span class="dupe_times" style="font-size: 13px;">(${duplicate.times})</span></p>`).join('<br />');
 
     // trigger the color when hovering over the duplicate balls
     const styleTrigger = element => {
@@ -152,6 +152,24 @@ ${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
         element.addEventListener('mouseenter', event => styleTrigger(element));
         element.addEventListener('mouseleave', event => styleTrigger(element));
     }
+
+    // make mainBalls stick to the top once it's been scrolled to
+    const mainBalls = document.getElementById('mainBalls');
+    const mainBallsPosition = (window.pageYOffset || document.documentElement.scrollTop) + mainBalls.getBoundingClientRect().top;
+
+    mainBalls.style.backgroundColor = 'white';
+
+    window.addEventListener('scroll', event => {
+        const currentPosition = (window.pageYOffset || document.documentElement.scrollTop);
+
+        if (currentPosition > mainBallsPosition) {
+            mainBalls.style.position = 'fixed';
+            mainBalls.style.top = '0px';
+        } else {
+            mainBalls.style.position = '';
+            mainBalls.style.top = '';
+        }
+    });
 
     // scroll to the result node automatically
     document.getElementById('resultNode').scrollIntoView();
