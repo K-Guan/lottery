@@ -65,7 +65,7 @@ usefulTools.blueBallHighlight = () => {
     const lastBalls = Array.from(blueBalls[blueBalls.length - 1]).map(ball => ball.innerHTML);
 
     for (const balls of blueBalls) {
-        if (checkEquals(Array.from(balls).map(ball => ball.innerHTML), lastBalls)) balls[0].parentNode.click();
+        if (checkEquals(Array.from(balls).map(ball => ball.innerHTML), lastBalls)) balls[0].parentNode.className = 'bg_plum';
     }
 };
 
@@ -104,7 +104,7 @@ diffCheckerFuncs.lineHighlight = () => {
     const search = JSON.parse('{"' + decodeURI(location.search.substring(1)).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
     Array.from(document.getElementsByTagName('tr')).filter(element => element.getAttribute('data-period') ===
                                                            String(Number(search.beginPeriod) +
-                                                                  ((Number(search.endPeriod) - Number(search.beginPeriod)) / 2)))[0].click();
+                                                                  ((Number(search.endPeriod) - Number(search.beginPeriod)) / 2)))[0].className = 'bg_plum';
 };
 
 // function to gets the result and puts it into the page
@@ -250,8 +250,8 @@ diffCheckerFuncs.init = () => {
             dateElement.appendChild(link);
 
             dateElement.addEventListener('click', event => {
-                // click on the row again to remove the line highlight
-                row.click();
+                // change the className of the row to none to remove the line highlight
+                row.className = '';
                 diffCheckerFuncs.getResult(row, date);
             });
     });
