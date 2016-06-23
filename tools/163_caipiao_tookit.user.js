@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         163 caipiao toolkit
 // @namespace    https://stackoverflow.com/users/5299236/kevin-guan
-// @version      2.7
+// @version      2.8
 // @description  Tools, and styles for caipiao.163.com
 // @author       Kevin
 // @include      /^https?:\/\/trend\.caipiao\.163\.com\/.*/
@@ -37,7 +37,7 @@ usefulTools.hideNodes = () => {
         document.getElementsByClassName('hot_block seohot_block clearfix')[0]
     ];
 
-    nodesToHide.map(element => {
+    nodesToHide.forEach(element => {
         if (typeof element === "string")
             element = document.getElementById(element);
 
@@ -144,8 +144,8 @@ ${duplicate.balls.map(element => `<span>${element}</span>`).join(' ')}
             }
         };
 
-        Array.from(element.getElementsByTagName('span')).map(trigger);
-        Array.from(document.getElementById('mainBalls').getElementsByTagName('span')).map(trigger);
+        Array.from(element.getElementsByTagName('span')).forEach(trigger);
+        Array.from(document.getElementById('mainBalls').getElementsByTagName('span')).forEach(trigger);
     };
 
     for (const element of Array.from(document.getElementsByClassName('subdupes'))) {
@@ -236,7 +236,7 @@ diffCheckerFuncs.init = () => {
     // and send the balls as selected balls with the date of them
     Array.from(document.getElementsByTagName('tr'))
         .filter(element => element.hasAttribute('data-period'))  // filter the rows we're looking for
-        .map(row => {
+        .forEach(row => {
             const dateElement = row.children[0];
             const date = dateElement.innerHTML;
             const link = document.createElement('a');
